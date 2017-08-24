@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>天气预报</title>
+    <style>
+    table {
+        width: 600px;
+        border-collapse: collapse;
+    }
+
+    td {
+        height: 40px;
+        text-align: center;
+        border: 1px solid #666;
+    }
+    </style>
+</head>
+
+<body>
+   	<span id="sp"></span>
+    <select name="" id="city">
+        <option value="广州">广州</option>
+        <option value="北京">北京</option>
+        <option value="上海">上海</option>
+        <option value="贵阳">贵阳</option>
+    </select>
+    <div id="box"></div>
+    <table id="tb">
+    	
+    </table>
+    <script src="template-native.js"></script>
+    <script>
+    var cityl = document.getElementById('city');
+
+  
+    var box = document.getElementById('box');
+    var sp = document.getElementById('sp');
+    var tb = document.getElementById('tb');
+    var xmlhttp = null;
+    if (window.XMLHttpRequest) {
+        xmlhttp = new XMLHttpRequest();
+    } else {
+        xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+    }
+
+    // var xmlhttp = new XMLHttpRequest();
+    cityl.onchange = function() {
+    	// console.log(cityl.value);
+    	var newCity = cityl.value;
+        var url = 'ss.php?city='+cityl.value;
+        // console.log(url);
+        xmlhttp.open('GET', url);
+        xmlhttp.send(null);
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                
+                console.log(JSON.parse(xmlhttp.responseText));
+                var res = JSON.parse(xmlhttp.responseText);
+                // var html = template('tpl',res);
+                sp.innerHTML = res.date;
+                var weatherData = res.results[0];
+                var html = template('item',weatherData);
+                console.log(html);
+                tb.innerHTML = html;
+               
+            }
+        }
+    }
+    </script>
+
+<!--     <script id="tpl" type = 'text/template'>
+    	<% for(var i = 0;i<weatherData.length;i++){ %>
+	    	<tr>
+	    		<td><%= weatherData[i].date %></td>
+	    		<td><%= weatherData[i].date %></td>
+	    		<td><%= weatherData[i].date %></td>
+	    		<td><%= weatherData[i].date %></td>
+	    		<td><%= weatherData[i].date %></td>
+	    	</tr>
+	    <% } %>
+    </script> -->
+
+    	<!-- 抽离模板 -->
+	<script type="text/template" id="item">
+		<% for(var i=0; i<weather_data.length; i++) { %>
+			<tr>
+	    		<td><%= weather_data[i].date %></td>
+	    		<td><%= weather_data[i].temperature %></td>
+	    		<td><img src="<%= weather_data[i].nightPictureUrl %>"></td>
+	    		<td><%= weather_data[i].weather %></td>
+	    		<td><%= weather_data[i].wind %></td>
+	    	</tr>
+		<% } %>
+	</script>
+</body>
+
+</html>
